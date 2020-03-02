@@ -24,7 +24,6 @@ macro(set_openssl_sub_target sub_lib_name)
       IMPORTED_LOCATION "${platform_spec_path}/lib${sub_lib_name}-1_1.dll"
       IMPORTED_IMPLIB "${platform_spec_path}/lib${sub_lib_name}.lib"
     )
-    set(OPENSSL_LIB_PATH "${platform_spec_path}" CACHE INTERNAL "OpenSSL Library location" )
   else()
     set_target_properties(${sub_target_name} PROPERTIES
       IMPORTED_LOCATION "${platform_spec_path}/lib${sub_lib_name}.a"
@@ -40,3 +39,8 @@ set_openssl_sub_target(${target_name})
 set(target_name crypto)
 set_openssl_sub_target(${target_name})
 
+# -----store inc & lib dir
+set(OPENSSL_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/${platform_name}" CACHE INTERNAL "OpenSSL Include Directory" )
+if (WINDOWS)
+    set(OPENSSL_LIB_DIR "${platform_spec_path}" CACHE INTERNAL "OpenSSL Library Directory" )
+endif()
