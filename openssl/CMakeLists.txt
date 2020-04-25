@@ -40,7 +40,7 @@ set(target_name crypto)
 set_openssl_sub_target(${target_name})
 
 # -----store inc & lib dir
-set(OPENSSL_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/${platform_name}" CACHE INTERNAL "OpenSSL Include Directory" )
+set(OPENSSL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/${platform_name}" CACHE INTERNAL "OpenSSL Include Directory" )
 if (WINDOWS)
-    set(OPENSSL_LIB_DIR "${platform_spec_path}" CACHE INTERNAL "OpenSSL Library Directory" )
+    set(OPENSSL_LIBRARY_DIR "${platform_spec_path}" CACHE INTERNAL "OpenSSL Library Directory" )
 endif()
