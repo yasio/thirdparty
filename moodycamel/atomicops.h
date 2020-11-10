@@ -59,6 +59,7 @@
 #if defined(AE_VCPP) || defined(AE_ICC)
 #define AE_FORCEINLINE __forceinline
 #elif defined(AE_GCC)
+//#define AE_FORCEINLINE __attribute__((always_inline)) 
 #define AE_FORCEINLINE inline
 #else
 #define AE_FORCEINLINE inline
@@ -441,6 +442,7 @@ namespace moodycamel
 		        assert(initialCount >= 0);
 		        kern_return_t rc = semaphore_create(mach_task_self(), &m_sema, SYNC_POLICY_FIFO, initialCount);
 		        assert(rc == KERN_SUCCESS);
+		        AE_UNUSED(rc);
 		    }
 
 		    AE_NO_TSAN ~Semaphore()
@@ -458,11 +460,11 @@ namespace moodycamel
 				return timed_wait(0);
 			}
 
-			bool timed_wait(std::int64_t timeout_usecs) AE_NO_TSAN
+			bool timed_wait(std::uint64_t timeout_usecs) AE_NO_TSAN
 			{
 				mach_timespec_t ts;
 				ts.tv_sec = static_cast<unsigned int>(timeout_usecs / 1000000);
-				ts.tv_nsec = (timeout_usecs % 1000000) * 1000;
+				ts.tv_nsec = static_cast<int>((timeout_usecs % 1000000) * 1000);
 
 				// added in OSX 10.10: https://developer.apple.com/library/prerelease/mac/documentation/General/Reference/APIDiffsMacOSX10_10SeedDiff/modules/Darwin.html
 				kern_return_t rc = semaphore_timedwait(m_sema, ts);
@@ -498,8 +500,9 @@ namespace moodycamel
 		    AE_NO_TSAN Semaphore(int initialCount = 0)
 		    {
 		        assert(initialCount >= 0);
-		        int rc = sem_init(&m_sema, 0, initialCount);
+		        int rc = sem_init(&m_sema, 0, static_cast<unsigned int>(initialCount));
 		        assert(rc == 0);
+		        AE_UNUSED(rc);
 		    }
 
 		    AE_NO_TSAN ~Semaphore()
@@ -534,8 +537,8 @@ namespace moodycamel
 				const int usecs_in_1_sec = 1000000;
 				const int nsecs_in_1_sec = 1000000000;
 				clock_gettime(CLOCK_REALTIME, &ts);
-				ts.tv_sec += usecs / usecs_in_1_sec;
-				ts.tv_nsec += (usecs % usecs_in_1_sec) * 1000;
+				ts.tv_sec += static_cast<time_t>(usecs / usecs_in_1_sec);
+				ts.tv_nsec += static_cast<long>(usecs % usecs_in_1_sec) * 1000;
 				// sem_timedwait bombs if you have more than 1e9 in tv_nsec
 				// so we have to clean things up before passing it in
 				if (ts.tv_nsec >= nsecs_in_1_sec) {
@@ -585,7 +588,7 @@ namespace moodycamel
 		        // Is there a better way to set the initial spin count?
 		        // If we lower it to 1000, testBenaphore becomes 15x slower on my Core i7-5930K Windows PC,
 		        // as threads start hitting the kernel semaphore.
-		        int spin = 10000;
+		        int spin = 1024;
 		        while (--spin >= 0)
 		        {
 		            if (m_count.load() > 0)
@@ -599,8 +602,11 @@ namespace moodycamel
 				if (oldCount > 0)
 					return true;
 		        if (timeout_usecs < 0)
-					return m_sema.wait();
-				if (m_sema.timed_wait(timeout_usecs))
+				{
+					if (m_sema.wait())
+						return true;
+				}
+				if (timeout_usecs > 0 && m_sema.timed_wait(static_cast<uint64_t>(timeout_usecs)))
 					return true;
 				// At this point, we've timed out waiting for the semaphore, but the
 				// count is still decremented indicating we may still be waiting on
@@ -656,10 +662,10 @@ namespace moodycamel
 		        }
 		    }
 		    
-		    ssize_t availableApprox() const AE_NO_TSAN
+		    std::size_t availableApprox() const AE_NO_TSAN
 		    {
 		    	ssize_t count = m_count.load();
-		    	return count > 0 ? count : 0;
+		    	return count > 0 ? static_cast<std::size_t>(count) : 0;
 		    }
 		};
 	}	// end namespace spsc_sema
