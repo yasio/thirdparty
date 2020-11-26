@@ -1914,7 +1914,15 @@ namespace sol {
 #endif // sol luajit
 #endif // luajit
 
-#if defined(LUA_VERSION_NUM) && LUA_VERSION_NUM >= 502
+#if defined(LUA_VERSION_NUM) && LUA_VERSION_NUM >= 504
+#if !defined(LUA_ERRGCMM)
+/* So Lua 5.4 actually removes this, which breaks sol2...
+ man, this API is quite unstable...!
+*/
+#  define LUA_ERRGCMM (LUA_ERRERR + 2)
+#endif /* LUA_ERRGCMM define */
+#define SOL_LUA_VERSION LUA_VERSION_NUM
+#elif defined(LUA_VERSION_NUM) && LUA_VERSION_NUM >= 502
 #define SOL_LUA_VERSION LUA_VERSION_NUM
 #elif defined(LUA_VERSION_NUM) && LUA_VERSION_NUM == 501
 #define SOL_LUA_VERSION LUA_VERSION_NUM
