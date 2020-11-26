@@ -1,2 +1,2 @@
-# external
-The yasio external prebuilt libs repo, all thirdpary of this repo is optional for yasio-core, if you don't use lua script bindings, yasio-core does'nt dependent any of them by default.
+# The external of yasio
+All thirdparties of this repo are optional for yasio-core, if you don't use lua script bindings, yasio-core doesn't depends any of them by default.
