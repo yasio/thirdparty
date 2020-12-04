@@ -6364,7 +6364,7 @@ struct ErrorHandler {
       throw LuaErrorRunningError(status,
                                  message ? std::string(message)
                                          : "unknown error running error");
-#if LUA_VERSION_NUM >= 502
+#  if LUA_VERSION_NUM >= 502 && LUA_VERSION_NUM < 504
     case LUA_ERRGCMM:
       throw LuaGCError(status,
                        message ? std::string(message) : "unknown gc error");
@@ -6917,7 +6917,12 @@ public:
     if (argnum < 0) {
       argnum = 0;
     }
+#if LUA_VERSION_NUM >= 504
+    int nres = 0;
+    int result = lua_resume(thread, state, argnum, &nres);
+#else
     int result = lua_resume(thread, state, argnum);
+#endif
     except::checkErrorAndThrow(result, thread);
     return detail::FunctionResultProxy::ReturnValue(thread, result, 1,
                                                     types::typetag<Result>());
