@@ -760,7 +760,7 @@ inline int lua_rawget_rtype(lua_State *L, int idx) {
 #if LUA_VERSION_NUM < 501
 void lua_createtable(lua_State *L, int narr, int nrec) { lua_newtable(L); }
 #endif
-#  if LUA_VERSION_NUM >= 502 || (defined(LUAJIT_VERSION) && LUAJIT_VERSION >= 20100)
+#  if LUA_VERSION_NUM >= 502 || (defined(LUAJIT_VERSION_NUM) && LUAJIT_VERSION_NUM >= 20100)
 using ::lua_tonumberx;
 #else
 inline lua_Number lua_tonumberx(lua_State *L, int index, int *isnum)
