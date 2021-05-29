@@ -756,6 +756,15 @@ inline int lua_rawget_rtype(lua_State *L, int idx) {
   lua_rawget(L, idx);
   return lua_type(L, -1);
 }
+inline int lua_isinteger(lua_State *L, int index) {
+	if (lua_type(L, index) == LUA_TNUMBER) {
+		lua_Number n = lua_tonumber(L, index);
+		lua_Integer i = lua_tointeger(L, index);
+		if (i == n)
+			return 1;
+	}
+	return 0;
+}
 #endif
 #if LUA_VERSION_NUM < 501
 void lua_createtable(lua_State *L, int narr, int nrec) { lua_newtable(L); }
