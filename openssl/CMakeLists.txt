@@ -1,5 +1,3 @@
-cmake_minimum_required(VERSION 3.6)
-
 set(lib_name openssl)
 
 project(${lib_name})
@@ -7,9 +5,8 @@ project(${lib_name})
 include(../cmake/ExternalConfig.cmake)
 
 # -----macro: set openssl sub target-----
-macro(set_openssl_sub_target sub_lib_name)
+macro(set_openssl_sub_target sub_target_name sub_lib_name)
   
-  set(sub_target_name ext_${sub_lib_name})
   if(WINDOWS)
     add_library(${sub_target_name} SHARED IMPORTED GLOBAL)
   else()
@@ -17,30 +14,44 @@ macro(set_openssl_sub_target sub_lib_name)
   endif()
 
   set_target_properties(${sub_target_name} PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include/${platform_name}"
+    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include"
   )
+
+  set(imp_lib_name "")
   if(WINDOWS)
+    set(impl_lib_suffix "")
+    if(WIN64)
+        set(impl_lib_suffix "-${ARCH_ALIAS}")
+    endif()
+    set(imp_lib_name "${platform_spec_path}/lib${sub_lib_name}.lib")
     set_target_properties(${sub_target_name} PROPERTIES
-      IMPORTED_LOCATION "${platform_spec_path}/lib${sub_lib_name}-1_1.dll"
+      IMPORTED_LOCATION "${platform_spec_path}/lib${sub_lib_name}-1_1${impl_lib_suffix}.dll"
       IMPORTED_IMPLIB "${platform_spec_path}/lib${sub_lib_name}.lib"
     )
   else()
+    set(imp_lib_name "${platform_spec_path}/lib${sub_lib_name}.a")
     set_target_properties(${sub_target_name} PROPERTIES
       IMPORTED_LOCATION "${platform_spec_path}/lib${sub_lib_name}.a"
     )
   endif()
+  if(${sub_lib_name} STREQUAL "ssl")
+    set(OPENSSL_ROOT_DIR "${platform_spec_path}" CACHE STRING "" FORCE)
+    set(OPENSSL_SSL_LIBRARY "${imp_lib_name}" CACHE STRING "" FORCE)
+  else()
+    set(OPENSSL_CRYPTO_LIBRARY "${imp_lib_name}" CACHE STRING "" FORCE)
+  endif()
 endmacro()
 
 # -----sub target 1: ssl-----
-set(target_name ssl)
+set(target_name OpenSSL::SSL ssl)
 set_openssl_sub_target(${target_name})
 
 # -----sub target 2: crypto-----
-set(target_name crypto)
+set(target_name OpenSSL::Crypto crypto)
 set_openssl_sub_target(${target_name})
 
 # -----store inc & lib dir
-set(OPENSSL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/${platform_name}" CACHE INTERNAL "OpenSSL Include Directory" )
+set(OPENSSL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE STRING "OpenSSL include dir" FORCE)
 if (WINDOWS)
     set(OPENSSL_LIBRARY_DIR "${platform_spec_path}" CACHE INTERNAL "OpenSSL Library Directory" )
 endif()
