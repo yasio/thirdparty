@@ -4,7 +4,6 @@ project(${lib_name})
 
 include(../cmake/ExternalConfig.cmake)
 
-message(STATUS "Build with openssl support")
 if(NOT IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/prebuilt)
     set (package_name buildware_dist_v42)
     message(AUTHOR_WARNING "Downloading openssl prebuilt from https://github.com/axmolengine/buildware ...")
