@@ -4,6 +4,21 @@ project(${lib_name})
 
 include(../cmake/ExternalConfig.cmake)
 
+message(STATUS "Build with openssl support")
+if(NOT IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/prebuilt)
+    set (package_name buildware_dist_v42)
+    message(AUTHOR_WARNING "Downloading openssl prebuilt from https://github.com/axmolengine/buildware ...")
+    if (NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip)
+        file(DOWNLOAD https://github.com/axmolengine/buildware/releases/download/v42/${package_name}.zip ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip)
+    endif()
+    file(ARCHIVE_EXTRACT INPUT ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip DESTINATION ${CMAKE_CURRENT_LIST_DIR}/ PATTERNS ${package_name}/openssl/**)
+    file(RENAME ${CMAKE_CURRENT_LIST_DIR}/${package_name}/openssl/include ${CMAKE_CURRENT_LIST_DIR}/include)
+    file(RENAME ${CMAKE_CURRENT_LIST_DIR}/${package_name}/openssl/prebuilt ${CMAKE_CURRENT_LIST_DIR}/prebuilt)
+    file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/${package_name})
+    file(REMOVE ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip)
+    message(FATAL_ERROR "Stop to debug")
+endif()
+
 # -----macro: set openssl sub target-----
 macro(set_openssl_sub_target sub_target_name sub_lib_name)
   
