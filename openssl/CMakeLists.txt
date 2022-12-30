@@ -16,7 +16,6 @@ if(NOT IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/prebuilt)
     file(RENAME ${CMAKE_CURRENT_LIST_DIR}/${package_name}/openssl/prebuilt ${CMAKE_CURRENT_LIST_DIR}/prebuilt)
     file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/${package_name})
     file(REMOVE ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip)
-    message(FATAL_ERROR "Stop to debug")
 endif()
 
 # -----macro: set openssl sub target-----
