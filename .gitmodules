@@ -10,3 +10,6 @@
 [submodule "lua"]
 	path = lua
 	url = https://github.com/lua/lua
+[submodule "llhttp"]
+	path = llhttp
+	url = https://github.com/nodejs/llhttp.git
