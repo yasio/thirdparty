@@ -5,7 +5,7 @@ project(${lib_name})
 include(../cmake/ExternalConfig.cmake)
 
 if(NOT IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/prebuilt)
-    set (package_name buildware_dist_v42)
+    set (package_name buildware_dist_v43)
     message(AUTHOR_WARNING "Downloading openssl prebuilt from https://github.com/axmolengine/buildware ...")
     if (NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip)
         file(DOWNLOAD https://github.com/axmolengine/buildware/releases/download/v42/${package_name}.zip ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip)
