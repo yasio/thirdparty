@@ -2,7 +2,7 @@ set(lib_name openssl)
 
 project(${lib_name})
 
-include(../cmake/ExternalConfig.cmake)
+include(../cmake/PlatformHelper.cmake)
 
 if(NOT IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/prebuilt)
     set (package_version v49)
