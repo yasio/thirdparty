@@ -13,3 +13,6 @@
 [submodule "llhttp"]
 	path = llhttp
 	url = https://github.com/nodejs/llhttp.git
+[submodule "wepoll"]
+	path = wepoll
+	url = https://github.com/piscisaureus/wepoll
