@@ -5,7 +5,7 @@ project(${lib_name})
 include(../cmake/PlatformHelper.cmake)
 
 if(NOT IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/prebuilt)
-    set (package_version v51)
+    set (package_version v55)
     set (package_name buildware_dist_${package_version})
     message(AUTHOR_WARNING "Downloading openssl prebuilt from https://github.com/axmolengine/buildware ...")
     if (NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip)
