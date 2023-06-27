@@ -27,3 +27,5 @@ else()
     IMPORTED_LOCATION "${platform_spec_path}/libcares.a"
   )
 endif()
+
+set(CARES_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/thirdparty/c-ares/include" CACHE STRING "c-ares Include Directory" )
