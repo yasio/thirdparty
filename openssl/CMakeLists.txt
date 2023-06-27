@@ -2,21 +2,9 @@ set(lib_name openssl)
 
 project(${lib_name})
 
-include(../cmake/PlatformHelper.cmake)
+include(../cmake/axpkg.cmake)
 
-if(NOT IS_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/prebuilt)
-    set (package_version v55)
-    set (package_name buildware_dist_${package_version})
-    message(AUTHOR_WARNING "Downloading openssl prebuilt from https://github.com/axmolengine/buildware ...")
-    if (NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip)
-        file(DOWNLOAD https://github.com/axmolengine/buildware/releases/download/${package_version}/${package_name}.zip ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip)
-    endif()
-    file(ARCHIVE_EXTRACT INPUT ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip DESTINATION ${CMAKE_CURRENT_LIST_DIR}/ PATTERNS ${package_name}/openssl/**)
-    file(RENAME ${CMAKE_CURRENT_LIST_DIR}/${package_name}/openssl/include ${CMAKE_CURRENT_LIST_DIR}/include)
-    file(RENAME ${CMAKE_CURRENT_LIST_DIR}/${package_name}/openssl/prebuilt ${CMAKE_CURRENT_LIST_DIR}/prebuilt)
-    file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/${package_name})
-    file(REMOVE ${CMAKE_CURRENT_LIST_DIR}/${package_name}.zip)
-endif()
+axpkg_require(openssl ${CMAKE_CURRENT_LIST_DIR})
 
 # -----macro: set openssl sub target-----
 macro(set_openssl_sub_target sub_target_name sub_lib_name)
