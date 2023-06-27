@@ -18,6 +18,12 @@ set_target_properties(${target_name} PROPERTIES
   INTERFACE_COMPILE_DEFINITIONS CARES_STATICLIB=1
 )
 
+if (APPLE)
+  set_target_properties(${target_name} PROPERTIES
+      INTERFACE_LINK_LIBRARIES resolv
+  )
+endif()
+
 if(WINDOWS)
   set_target_properties(${target_name} PROPERTIES
     IMPORTED_IMPLIB "${platform_spec_path}/cares.lib"
