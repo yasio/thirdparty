@@ -1,9 +1,6 @@
 [submodule "kcp"]
 	path = kcp
 	url = https://github.com/skywind3000/kcp
-[submodule "mbedtls"]
-	path = mbedtls
-	url = https://github.com/Mbed-TLS/mbedtls
 [submodule "lua"]
 	path = lua
 	url = https://github.com/lua/lua
