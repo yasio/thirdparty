@@ -1,6 +1,2 @@
-openssl/include
-openssl/prebuilt
-c-ares/include
-c-ares/prebuilt
-
 /**/*.zip
+/**/*_d

@@ -1,10 +1,11 @@
+
 set(lib_name openssl)
 
 project(${lib_name})
 
-include(../cmake/axpkg.cmake)
+_1kfetch_dist(openssl)
 
-axpkg_require(openssl ${CMAKE_CURRENT_LIST_DIR})
+set(OPENSSL_INCLUDE_DIR "${openssl_INC_DIR}" CACHE STRING "OpenSSL include dir" FORCE)
 
 # -----macro: set openssl sub target-----
 macro(set_openssl_sub_target sub_target_name sub_lib_name)
@@ -16,7 +17,7 @@ macro(set_openssl_sub_target sub_target_name sub_lib_name)
   endif()
 
   set_target_properties(${sub_target_name} PROPERTIES
-    INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    INTERFACE_INCLUDE_DIRECTORIES "${openssl_INC_DIR}"
   )
 
   set(imp_lib_name "")
@@ -25,19 +26,19 @@ macro(set_openssl_sub_target sub_target_name sub_lib_name)
     if(WIN64)
         set(impl_lib_suffix "-${ARCH_ALIAS}")
     endif()
-    set(imp_lib_name "${platform_spec_path}/lib${sub_lib_name}.lib")
+    set(imp_lib_name "${openssl_LIB_DIR}/lib${sub_lib_name}.lib")
     set_target_properties(${sub_target_name} PROPERTIES
-      IMPORTED_LOCATION "${platform_spec_path}/lib${sub_lib_name}-3${impl_lib_suffix}.dll"
-      IMPORTED_IMPLIB "${platform_spec_path}/lib${sub_lib_name}.lib"
+      IMPORTED_LOCATION "${openssl_LIB_DIR}/lib${sub_lib_name}-3${impl_lib_suffix}.dll"
+      IMPORTED_IMPLIB "${openssl_LIB_DIR}/lib${sub_lib_name}.lib"
     )
   else()
-    set(imp_lib_name "${platform_spec_path}/lib${sub_lib_name}.a")
+    set(imp_lib_name "${openssl_LIB_DIR}/lib${sub_lib_name}.a")
     set_target_properties(${sub_target_name} PROPERTIES
-      IMPORTED_LOCATION "${platform_spec_path}/lib${sub_lib_name}.a"
+      IMPORTED_LOCATION "${openssl_LIB_DIR}/lib${sub_lib_name}.a"
     )
   endif()
   if(${sub_lib_name} STREQUAL "ssl")
-    set(OPENSSL_ROOT_DIR "${platform_spec_path}" CACHE STRING "" FORCE)
+    set(OPENSSL_ROOT_DIR "${openssl_LIB_DIR}" CACHE STRING "" FORCE)
     set(OPENSSL_SSL_LIBRARY "${imp_lib_name}" CACHE STRING "" FORCE)
   else()
     set(OPENSSL_CRYPTO_LIBRARY "${imp_lib_name}" CACHE STRING "" FORCE)
@@ -51,9 +52,3 @@ set_openssl_sub_target(${target_name})
 # -----sub target 2: crypto-----
 set(target_name OpenSSL::Crypto crypto)
 set_openssl_sub_target(${target_name})
-
-# -----store inc & lib dir
-set(OPENSSL_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE STRING "OpenSSL include dir" FORCE)
-if (WINDOWS)
-    set(OPENSSL_LIBRARY_DIR "${platform_spec_path}" CACHE INTERNAL "OpenSSL Library Directory" )
-endif()

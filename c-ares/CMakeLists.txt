@@ -3,9 +3,7 @@ set(target_name c-ares)
 
 project(${target_name})
 
-include(../cmake/axpkg.cmake)
-
-axpkg_require(cares ${CMAKE_CURRENT_LIST_DIR})
+_1kfetch_dist(cares)
 
 if(WINDOWS)
   add_library(${target_name} SHARED IMPORTED GLOBAL)
@@ -14,7 +12,7 @@ else()
 endif()
 
 set_target_properties(${target_name} PROPERTIES
-  INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_CURRENT_SOURCE_DIR}/include/"
+  INTERFACE_INCLUDE_DIRECTORIES "${cares_INC_DIR}"
   INTERFACE_COMPILE_DEFINITIONS CARES_STATICLIB=1
 )
 
@@ -26,12 +24,12 @@ endif()
 
 if(WINDOWS)
   set_target_properties(${target_name} PROPERTIES
-    IMPORTED_IMPLIB "${platform_spec_path}/cares.lib"
+    IMPORTED_IMPLIB "${cares_LIB_DIR}/cares.lib"
   )
 else()
   set_target_properties(${target_name} PROPERTIES
-    IMPORTED_LOCATION "${platform_spec_path}/libcares.a"
+    IMPORTED_LOCATION "${cares_LIB_DIR}/libcares.a"
   )
 endif()
 
-set(CARES_INCLUDE_DIR "${PROJECT_SOURCE_DIR}/thirdparty/c-ares/include" CACHE STRING "c-ares Include Directory" )
+set(CARES_INCLUDE_DIR "${cares_INC_DIR}" CACHE STRING "c-ares Include Directory" )
